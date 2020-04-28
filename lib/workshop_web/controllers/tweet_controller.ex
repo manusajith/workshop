@@ -8,16 +8,17 @@ defmodule WorkshopWeb.TweetController do
   def index(conn, params) do
     changeset = TweetIndexSchema.changeset(params)
 
-    with {:ok, post_params} <- TweetIndexSchema.to_map(changeset) do
-      posts = Timeline.list_tweets(post_params)
-      json(conn, Enum.map(posts, &%{body: &1.body}))
+    with {:ok, tweet_params} <- TweetIndexSchema.to_map(changeset) do
+      tweets = Timeline.list_tweets(tweet_params)
+      render(conn, "index.json", tweets: tweets)
     end
   end
 
   def create(conn, params) do
-    with {:ok, params} <- Map.fetch(params, "tweet"),
-         {:ok, post} <- Timeline.post_tweet(params) do
-      json(conn, %{id: post.id})
+    # TODO: Replace Map.fetch with our own helper that returns something other than a generic :error
+    with {:ok, tweet_params} <- Map.fetch(params, "data"),
+         {:ok, tweet} <- Timeline.post_tweet(tweet_params) do
+      render(conn, "show.json", tweet: tweet)
     end
   end
 

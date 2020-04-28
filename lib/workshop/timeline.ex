@@ -1,29 +1,14 @@
 defmodule Workshop.Timeline do
   alias WorkshopStorage.Posts
+  alias Workshop.Timeline.Actions.{PostTweet, ListTweets}
 
-  @type post_params :: %{
-          body: String.t(),
-          username: String.t(),
-          likes: non_neg_integer,
-          published: boolean
-        }
-
-  @type list_tweets_opt :: {:only_latest, boolean}
-
-  @spec post_tweet(post_params) :: {:ok, Post.t()} | {:error, Ecto.Changeset.t()}
+  @spec post_tweet(PostTweet.params()) :: PostTweet.result()
   def post_tweet(params) do
-    Posts.create_post(params)
+    PostTweet.call(params)
   end
 
-  @spec list_tweets([list_tweets_opt]) :: [Post.t()]
+  @spec list_tweets(ListTweets.opts()) :: ListTweets.result()
   def list_tweets(opts \\ []) do
-    only_latest = opts[:only_latest]
-    posts = Posts.list_posts()
-
-    if only_latest do
-      Enum.take(posts, 5)
-    else
-      posts
-    end
+    ListTweets.call(opts)
   end
 end

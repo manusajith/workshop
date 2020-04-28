@@ -6,6 +6,7 @@ defmodule WorkshopStorage.Posts do
   alias WorkshopStorage.Posts.Post
   alias WorkshopStorage.Repo
 
+  @spec list_posts :: any
   def list_posts do
     Repo.all(Post)
   end
